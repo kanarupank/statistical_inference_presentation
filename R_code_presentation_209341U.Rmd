@@ -1,0 +1,217 @@
+---
+Title: "Mobile banking questionnaire responses analysis"
+Author: "K. Kanarupan (209341U)"
+---
+
+## Install packages
+install.packages('plyx')
+install.packages('gdata')
+install.packages('plotrix')
+install.packages('data.table')
+
+
+## Import Libraries
+library("data.table")
+library(plotrix)
+library(plyr) 
+library(plotrix)
+library(gdata)
+library(data.table)
+library("data.table")
+
+
+##load data
+setwd("D:/kana/statisticalLearning/presentation_code")
+data=read.csv("response_data.csv")
+
+
+
+### Descriptive Analysis
+
+##Gender
+gender_count=count(data$Gender)
+x=gender_count$freq
+gender=gender_count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(gender,piepercent)
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels , main = "Gender Pie Chart")
+
+
+##Age Groups
+age_count=count(data$Age.Group)
+x=age_count$freq
+age=age_count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(age, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels , main = "Age Group Pie Chart")
+
+
+
+##Occupation
+occupation_count=count(data$Current.Occupation)
+x=occupation_count$freq
+occupation=occupation_count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(occupation, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels, main = "Occupation")
+
+
+##Education Level
+education_count=count(data$The. highest. level. of. education)
+x=education_count$freq
+education=education_count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(education, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels ,col = c("red",'blue','purple', 'pink','yellow'), main = "Education")
+
+
+
+##Monthly income range
+count=count(data$Your. monthly. income. range)
+x=count$freq
+variable=count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(variable, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels ,col = c("red",'blue','purple', 'pink','yellow'), main = "Monthly Income Pie Chart")
+
+##app_comfortability
+count=count(data$app_comfortability)
+x=count$freq
+variable=count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(variable, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels , main = "App Usage Comfortability 1-5 Pie Chart")
+
+
+##banking_hours
+count=count(data$banking_hours_coded)
+x=count$freq
+variable=count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(variable, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels , main = "Banking Hours Pie Chart")
+
+
+
+
+# Hypothesis test
+
+
+data=read.csv("response_data.csv")
+
+#update column names for convinience 
+data_ <- rename.vars(data, from = "The highest level of education", to = "Education")
+##others are manually done when required 
+
+
+
+data$transition_coded=data$transition
+  
+  
+data$transition_coded[data$transition_coded=="Smooth, picked up as quick as I would have liked" 
+|data$transition_coded=="Smooth, picked up as quickly as I would have liked" ] <- "Smooth"
+data$transition_coded[data$transition_coded!="Smooth"] <- "Not Smooth"
+
+
+
+
+data[,"transition_coded", drop=FALSE]
+
+
+##transition_coded
+count=count(data$transition_coded)
+x=count$freq
+variable=count$x
+piepercent<- round(100*x/sum(x), 1)
+labels_new<-paste(variable, piepercent,sep="  ")
+final_labels<-paste(labels_new,'%',sep = "")
+pie(x,labels =final_labels , main = "transition_coded")
+
+
+data$transition_binary_coded=data$transition_coded
+data$transition_binary_coded[data$transition_coded=="Smooth"] <- 0
+data$transition_binary_coded[data$transition_coded=="Not Smooth"] <- 1
+
+data$transition_binary_coded=data$transition_coded
+data$transition_binary_coded[data$transition_coded=="Smooth"] <- 0
+data$transition_binary_coded[data$transition_coded=="Not Smooth"] <- 1
+
+data[,"transition_binary_coded", drop=FALSE]
+
+
+
+
+#Codify transition
+#Still not comfortable with - 1
+#Not smooth at all, required significant assistance - 2
+#Not very intuitive, underwent some struggle - 3
+#Smooth, picked up as quickly as I would have liked - 5
+
+data$transition_coded=data$transition
+
+
+data$transition_coded[data$transition_coded=="Smooth, picked up as quick as I would have liked" 
+|data$transition_coded=="Smooth, picked up as quickly as I would have liked" ] <-5
+data$transition_coded[data$transition_coded=="Not very intuitive, underwent some struggle"] <- 3
+data$transition_coded[data$transition_coded=="Not smooth at all, required significant assistance"] <- 2
+data$transition_coded[data$transition_coded=="Still not comfortable with"] <- 1
+
+data[,"transition_coded", drop=FALSE]
+
+boxplot(data$transition_coded~data$Gender)
+boxplot(data$app_comfortability~data$Gender)
+
+
+data=read.csv("response_data.csv")
+
+gender_transition=table(data$transition_coded, data$Gender)
+gender_transition
+
+smoothness=c(5, 3, 2, 1)
+male=c(24, 1, 5, 1)
+female=c(6,2,0,0)
+df=data.frame(smoothness,male,female)
+setDT(df)
+df
+
+
+chisq.test(c(df$smoothness,df$smoothness), c(df$male,df$female))
+
+
+###Hypothesis testing 2
+
+data=read.csv("response_data.csv")
+
+
+data$feedback_coded=data$feedback
+data$feedback_coded[data$feedback_coded==""] <- 0
+data$feedback_coded[data$feedback_coded!=0] <- 1
+data[,"feedback_coded", drop=FALSE]
+
+boxplot(data$feedback_coded~data$Gender)
+
+
+gender_feedback=table(data$feedback_coded, data$Gender)
+gender_feedback
+
+feedback=c(0,1)
+male=c(25, 6)
+female=c(6, 2)
+df=data.frame(feedback,male,female)
+setDT(df)
+df
+
+
+chisq.test(c(df$feedback,df$feedback), c(df$male,df$female))
+
+
+
+
+```
