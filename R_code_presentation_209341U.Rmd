@@ -214,4 +214,80 @@ chisq.test(c(df$feedback,df$feedback), c(df$male,df$female))
 
 
 
+###Hypothesis testing 3
+
+data=read.csv("response_data.csv")
+
+
+data$perception_coded=data$perception
+
+data$perception_coded[data$perception_coded=="Mobile banking is a hassle (less trustworthy or due to any other downsides) compared to traditional banking"] <- 1
+
+data$perception_coded[data$perception_coded=="Not much of a difference"] <- 2
+
+data$perception_coded[data$perception_coded=="Mobile banking is somewhat convenient compared to traditional banking"] <- 3
+
+data$perception_coded[data$perception_coded=="Mobile banking is way better than traditional banking"] <- 5
+
+data[,"perception_coded", drop=FALSE]
+
+boxplot(data$perception_coded~data$Gender)
+
+
+gender_perception=table(data$perception_coded, data$Gender)
+gender_perception
+
+perception=c(1,2,3,5)
+male=c(3,0,11,17)
+female=c(0,1,2,5)
+df=data.frame(perception,male,female)
+setDT(df)
+df
+
+
+chisq.test(c(df$perception,df$perception), c(df$male,df$female))
+
+
+
+###Hypothesis testing 4
+
+data=read.csv("response_data.csv")
+
+
+data$perception_coded=data$perception
+
+data$perception_coded[data$perception_coded=="Mobile banking is a hassle (less trustworthy or due to any other downsides) compared to traditional banking"] <- 1
+
+data$perception_coded[data$perception_coded=="Not much of a difference"] <- 2
+
+data$perception_coded[data$perception_coded=="Mobile banking is somewhat convenient compared to traditional banking"] <- 3
+
+data$perception_coded[data$perception_coded=="Mobile banking is way better than traditional banking"] <- 5
+
+data[,"perception_coded", drop=FALSE]
+
+boxplot(data$perception_coded~data$Monthly_Income)
+
+
+gender_perception=table(data$perception_coded, data$Monthly_Income)
+gender_perception
+
+perception=c(1,2,3,5)
+male=c(3,0,11,17)
+female=c(0,1,2,5)
+df=data.frame(perception,male,female)
+setDT(df)
+df
+
+
+chisq.test(c(df$perception,df$perception), c(df$male,df$female))
+
+
+
+boxplot(data$perception_coded~data$Education)
+boxplot(data$feedback_coded~data$Education)
+
+
+
+
 ```
